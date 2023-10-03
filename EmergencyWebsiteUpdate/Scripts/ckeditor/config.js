@@ -17,7 +17,7 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'basicstyles', groups: ['basicstyles', 'cleanup'] },
 		{ name: 'paragraph', groups: ['list', 'indent', 'blocks', 'align', 'bidi', 'paragraph'] },
 		'/',
-		{ name: 'links', groups: ['links'] },
+		{ name: 'links', groups: ['links', 'anchor'] },
 		{ name: 'insert', groups: ['insert'] },
 		{ name: 'styles', groups: ['styles'] },
 		{ name: 'colors', groups: ['colors'] },
@@ -26,5 +26,5 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'about', groups: ['about'] }
 	];
 
-	config.removeButtons = 'Source,Save,Templates,NewPage,ExportPdf,Preview,Print,Find,Replace,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,RemoveFormat,CopyFormatting,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Iframe,PageBreak,Maximize,ShowBlocks,About';
+	config.removeButtons = 'Source,Save,Templates,NewPage,ExportPdf,Preview,Print,Find,Replace,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,RemoveFormat,CopyFormatting,CreateDiv,BidiLtr,BidiRtl,Language,Iframe,PageBreak,Maximize,ShowBlocks,About';
 };
