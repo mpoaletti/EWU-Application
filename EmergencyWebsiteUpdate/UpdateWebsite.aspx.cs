@@ -216,13 +216,14 @@ namespace EmergencyWebsiteUpdate
     {
       StringBuilder info = new StringBuilder();
 
+      info.Append(hwriter.UpdatedInfoHelper(txtSubject.Text, txtMessage.Text));
+      
       //Retrieve Cache Info
       if (drpdwnAddOrReplace.SelectedValue == "Add To Current Message")
       {
-        info = Connection.RetrievePrevASPFile(tempASPCacheLocation);
+        info.Append(Connection.RetrievePrevASPFile(tempASPCacheLocation));
+        //info = Connection.RetrievePrevASPFile(tempASPCacheLocation);
       }
-
-      info.Append(hwriter.UpdatedInfoHelper(txtSubject.Text, txtMessage.Text));
 
       return info;
     }
