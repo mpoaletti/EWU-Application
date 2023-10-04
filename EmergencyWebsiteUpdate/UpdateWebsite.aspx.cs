@@ -186,11 +186,12 @@ namespace EmergencyWebsiteUpdate
       updateInfo.AppendLine(hwriter.Get_HTML_Body(informationUpdate).ToString());
       updateInfo.AppendLine(hwriter.Get_HTML_Footer().ToString());
 
-      
-      try{
-        //Write HTML file to temp file to transfer to server
+
+      try
+      {
+        //Write HTML file to temp file to transfer to server    
         File.WriteAllText(tempASPLocation, updateInfo.ToString());
-      
+
         //Write previous ASP message to cache file to retrieve on add to message next time
         File.WriteAllText(tempASPCacheLocation, informationUpdate.ToString());
 
@@ -222,7 +223,6 @@ namespace EmergencyWebsiteUpdate
       if (drpdwnAddOrReplace.SelectedValue == "Add To Current Message")
       {
         info.Append(Connection.RetrievePrevASPFile(tempASPCacheLocation));
-        //info = Connection.RetrievePrevASPFile(tempASPCacheLocation);
       }
 
       return info;
