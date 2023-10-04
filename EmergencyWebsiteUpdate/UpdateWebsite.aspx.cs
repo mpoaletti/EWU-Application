@@ -27,7 +27,7 @@ namespace EmergencyWebsiteUpdate
     //class instantiation for connecting to server
     private static Connection connection = new Connection();
 
-    //location paths of temp folder to store for SFTP transfer to GoDaddy server
+    //location paths of temp folder to store for SFTP transfer to GoDaddy server------------------
     //file temporary location of webpage being replaced to transfer
     private string tempASPLocation = Path.GetTempPath() + "/testing.asp";
     
