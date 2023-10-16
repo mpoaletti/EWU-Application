@@ -11,19 +11,19 @@
 							<img alt="University of Wisconsin Logo" src="swooshLOGOrevSmall.jpg" style="width: 175px; height: 110px" />
 						</td>
 						<td class="text-right" style="width: 268px; height: 22px">
-							<asp:Label ID="lblUsername" runat="server" Font-Names="Montserrat" Text="Username:" Font-Bold="True"></asp:Label>
+							<asp:Label ID="lblUsername" runat="server" Font-Names="Montserrat" Text="Username:" Font-Bold="True" Visible="False"></asp:Label>
 							&nbsp;</td>
 						<td style="height: 22px; width: 265px">
-							<asp:TextBox ID="txtboxUsername" runat="server" Width="200px" CausesValidation="True" ValidateRequestMode="Enabled"></asp:TextBox>
+							<asp:TextBox ID="txtboxUsername" runat="server" Width="200px" CausesValidation="True" ValidateRequestMode="Enabled" Visible="False"></asp:TextBox>
 						</td>
 						<td style="height: 22px"></td>
 					</tr>
 					<tr>
 						<td class="text-right" style="width: 268px">
-							<asp:Label ID="lblPassword" runat="server" Font-Names="Montserrat" Text="Password:" Font-Bold="True"></asp:Label>
+							<asp:Label ID="lblPassword" runat="server" Font-Names="Montserrat" Text="Password:" Font-Bold="True" Visible="False"></asp:Label>
 						</td>
 						<td style="width: 265px">
-							<asp:TextBox ID="txtboxPassword" runat="server" TextMode="Password" Width="200px" CausesValidation="True" ValidateRequestMode="Enabled"></asp:TextBox>
+							<asp:TextBox ID="txtboxPassword" runat="server" TextMode="Password" Width="200px" CausesValidation="True" ValidateRequestMode="Enabled" Visible="False"></asp:TextBox>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
 						<td>
 							<asp:Label ID="lblErrorMessage" runat="server" Visible="False"></asp:Label>
@@ -38,7 +38,7 @@
 							&nbsp;&nbsp;<asp:TextBox ID="txtboxVerificationCode" runat="server" Width="200px" CausesValidation="True" ValidateRequestMode="Enabled" Visible="False"></asp:TextBox>
 							&nbsp;&nbsp; </td>
 						<td style="width: 265px; height: 35px;" class="text-justify">
-							<asp:Button ID="bttnLogin" runat="server" Font-Names="Montserrat" Text="Login" OnClick="bttnLogin_Click" />
+							<asp:Button ID="bttnLogin" runat="server" Font-Names="Montserrat" Text="Login" OnClick="bttnLogin_Click" Visible="False" />
 							<br />
 							<asp:Button ID="bttnVerify" runat="server" Font-Names="Montserrat" Text="Verify" OnClick="bttnVerify_Click" Visible="False" />
 						</td>

@@ -6,6 +6,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Security;
 using System.Windows;
+using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.OpenIdConnect;
 
 namespace EmergencyWebsiteUpdate
 {
@@ -25,8 +27,10 @@ namespace EmergencyWebsiteUpdate
 				}
 			}
 
-			FormsAuthentication.SignOut();
-			Response.Redirect("LoginPage", true);
+			
+			Context.GetOwinContext().Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType, OpenIdConnectAuthenticationDefaults.AuthenticationType);
+			//FormsAuthentication.SignOut();
+			//Response.Redirect("LoginPage", true);
 		}
 	}
 }

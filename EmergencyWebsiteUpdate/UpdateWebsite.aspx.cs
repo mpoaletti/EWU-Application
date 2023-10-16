@@ -37,15 +37,28 @@ namespace EmergencyWebsiteUpdate
     //file location for previous message storage in plain text
     private string tempTextCacheLocation = Path.GetTempPath() + "/previousText.txt";
 
+    private static System.Web.UI.HtmlControls.HtmlGenericControl logOutControl;
+
     protected void Page_Load(object sender, EventArgs e)
     {
 
-      loggedIn = (bool)Session["logInStatus"];
+      if (!Request.IsAuthenticated) {
+                Session["logInStatus"] = false;
+                Response.Redirect("LoginPage.aspx", false);
+            }
+      else {      
+            logOutControl = (System.Web.UI.HtmlControls.HtmlGenericControl)Master.FindControl("LogOut");
+            //if (logOutControl != null) logOutControl.Visible = true;
+            if (logOutControl != null) logOutControl.Visible = false;
+            Session["Username"] = HttpContext.Current.GetOwinContext().Request.User.Identity.Name;
+            Session["logInStatus"] = true;
+            loggedIn = (bool)Session["logInStatus"];
+            lblLoggedIn.Text = "Logged in as: " + Session["Username"];
+            bttnConnection.Enabled = true;
+            lblConnection.Text = "Not Connected";
+        }
 
-      lblLoggedIn.Text = "Logged in as: " + Session["Username"];
-
-
-      if (!loggedIn)
+     /* if (!loggedIn)
       {
         bttnConnection.Enabled = false;
         lblConnection.Text = "Not Logged In";
@@ -54,7 +67,7 @@ namespace EmergencyWebsiteUpdate
       {
         bttnConnection.Enabled = true;
         lblConnection.Text = "Not Connected";
-      }
+      }*/
 
       if(!Connection.IsSFTPConnected())
       {

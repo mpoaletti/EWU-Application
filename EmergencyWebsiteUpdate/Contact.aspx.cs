@@ -9,9 +9,14 @@ namespace EmergencyWebsiteUpdate
 {
 	public partial class Contact : Page
 	{
+		private static System.Web.UI.HtmlControls.HtmlGenericControl logOutControl;
+
 		protected void Page_Load(object sender, EventArgs e)
 		{
+			logOutControl = (System.Web.UI.HtmlControls.HtmlGenericControl)Master.FindControl("LogOut");
+			if (logOutControl != null) logOutControl.Visible = false;
 
+			if (!Request.IsAuthenticated) Response.Redirect("LoginPage.aspx", false);
 		}
 	}
 }
