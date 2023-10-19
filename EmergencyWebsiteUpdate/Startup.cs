@@ -27,7 +27,6 @@ namespace EmergencyWebsiteUpdate
         private readonly string _authority = ConfigurationManager.AppSettings["okta:OrgUri"];
         private readonly string _clientSecret = ConfigurationManager.AppSettings["okta:ClientSecret"];
         private readonly string _postLogoutRedirectUri = ConfigurationManager.AppSettings["okta:PostLogoutRedirectUri"];
-        //private string _id_Token = "";
 
         public void Configuration(IAppBuilder app)
         {
@@ -56,16 +55,7 @@ namespace EmergencyWebsiteUpdate
                     AuthorizationCodeReceived = async n =>
                     {
                         var tokenClient = new TokenClient($"{_authority}/v1/token", _clientId, _clientSecret);
-                        //var tokenClient = new HttpClient();
                         var tokenResponse = await tokenClient.RequestAuthorizationCodeAsync(n.Code, _redirectUri);
-                        /*var tokenResponse = await tokenClient.RequestAuthorizationCodeTokenAsync(tokenClient, new AuthorizationCodeTokenRequest
-                        {
-                            Address = $"{_authority}/v1/token",
-                            ClientId = _clientId,
-                            ClientSecret = _clientSecret,
-                            Code = n.Code,
-                            RedirectUri = _redirectUri,
-                        });*/
 
                         if (tokenResponse.IsError)
                         {
@@ -81,10 +71,7 @@ namespace EmergencyWebsiteUpdate
                         new Claim("access_token", tokenResponse.AccessToken),
                         };
 
-                        //_id_Token = tokenResponse.IdentityToken;
-
                         n.AuthenticationTicket.Identity.AddClaims(claims);
-                        
                     },
 
                     RedirectToIdentityProvider = n =>
@@ -98,12 +85,8 @@ namespace EmergencyWebsiteUpdate
                             {
                                 n.ProtocolMessage.IdTokenHint = idTokenClaim.Value;
                             }
-                            else
-                            {
-                                //n.ProtocolMessage.IdTokenHint = _id_Token;
-                            }
                         }
-                        
+
                         return Task.CompletedTask;
                     },
                 },

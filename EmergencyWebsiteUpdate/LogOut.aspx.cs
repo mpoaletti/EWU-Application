@@ -27,10 +27,7 @@ namespace EmergencyWebsiteUpdate
 				}
 			}
 
-			
 			Context.GetOwinContext().Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType, OpenIdConnectAuthenticationDefaults.AuthenticationType);
-			//FormsAuthentication.SignOut();
-			//Response.Redirect("LoginPage", true);
 		}
 	}
 }

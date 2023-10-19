@@ -13,6 +13,7 @@ namespace EmergencyWebsiteUpdate
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
+			//Hiding Logout Control until Okta Logout function is fixed - currently error response
 			logOutControl = (System.Web.UI.HtmlControls.HtmlGenericControl)Master.FindControl("LogOut");
 			if (logOutControl != null) logOutControl.Visible = false;
 

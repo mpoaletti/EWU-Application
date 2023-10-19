@@ -19,7 +19,8 @@ namespace EmergencyWebsiteUpdate
     //string builder for update to send to website
     private StringBuilder informationUpdate = new StringBuilder();
 
-    private static bool loggedIn = false;
+    //No longer using.  Keeping logged in status in [Session] variable instead
+    //private static bool loggedIn = false;
     
     //class instantiation for gathering html
     private HTMLWriter hwriter = new HTMLWriter();
@@ -46,13 +47,15 @@ namespace EmergencyWebsiteUpdate
                 Session["logInStatus"] = false;
                 Response.Redirect("LoginPage.aspx", false);
             }
-      else {      
+      else {
+            //Hiding Logout Control until Okta Logout function is fixed - currently error response
             logOutControl = (System.Web.UI.HtmlControls.HtmlGenericControl)Master.FindControl("LogOut");
             //if (logOutControl != null) logOutControl.Visible = true;
             if (logOutControl != null) logOutControl.Visible = false;
+            
             Session["Username"] = HttpContext.Current.GetOwinContext().Request.User.Identity.Name;
             Session["logInStatus"] = true;
-            loggedIn = (bool)Session["logInStatus"];
+            //loggedIn = (bool)Session["logInStatus"];
             lblLoggedIn.Text = "Logged in as: " + Session["Username"];
             bttnConnection.Enabled = true;
             lblConnection.Text = "Not Connected";

@@ -16,7 +16,6 @@ namespace EmergencyWebsiteUpdate
 {
 	public partial class SiteMaster : MasterPage
 	{
-		//private static System.Web.UI.HtmlControls.HtmlGenericControl logOutControl;
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
@@ -27,7 +26,7 @@ namespace EmergencyWebsiteUpdate
 			if (!Request.IsAuthenticated)
 			{
 				HttpContext.Current.GetOwinContext().Authentication.Challenge(
-					new AuthenticationProperties { RedirectUri = "https://localhost:44339/UpdateWebsite" },
+					new AuthenticationProperties { RedirectUri = "https://137.81.9.55:4443/UpdateWebsite" },
 					OpenIdConnectAuthenticationDefaults.AuthenticationType);
 			}
 
@@ -36,8 +35,6 @@ namespace EmergencyWebsiteUpdate
 		protected void BtnLogout_Click(object sender, EventArgs e)
 		{
 			Response.Redirect("LogOut.aspx", false);
-			//Context.GetOwinContext().Authentication.SignOut(new AuthenticationProperties { RedirectUri = "https://localhost:44339" }, OpenIdConnectAuthenticationDefaults.AuthenticationType);
-			//Context.GetOwinContext().Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType, OpenIdConnectAuthenticationDefaults.AuthenticationType);
 		}
 	}
 }

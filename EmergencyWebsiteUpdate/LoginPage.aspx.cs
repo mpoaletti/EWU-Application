@@ -16,6 +16,9 @@ namespace EmergencyWebsiteUpdate
 {
   public partial class LoginPage : Page
   {
+    //Commented out code is from before Okta implementation.
+    //No longer using any of the code or variables that are commented out
+
     //declare ldap username and password variables
     //public static string ldapUserName;
     //private string ldapPW;
@@ -30,24 +33,14 @@ namespace EmergencyWebsiteUpdate
 
     protected void Page_Load(object sender, EventArgs e)
     {
+        //Hiding Logout Control until Okta Logout function is fixed - currently error response
         logOutControl = (System.Web.UI.HtmlControls.HtmlGenericControl)Master.FindControl("LogOut");
         if(logOutControl != null) logOutControl.Visible = false;
+        
         if (Request.IsAuthenticated)
         {
-            //ldapUserName = HttpContext.Current.GetOwinContext().Request.User.Identity.Name;
-            //bttnLogin.Text = ldapUserName;
-            //Session["Username"] = ldapUserName;
             Session["Username"] = HttpContext.Current.GetOwinContext().Request.User.Identity.Name;
             Session["logInStatus"] = true;
-            //logOutControl.Visible = true;
-            //FormsAuthenticationTicket tkt;
-            //string cookiestr;
-            //HttpCookie cookie;
-            //tkt = new FormsAuthenticationTicket(1, ldapUserName, DateTime.Now, DateTime.Now.AddMinutes(30), false, "");
-            //cookiestr = FormsAuthentication.Encrypt(tkt);
-            //cookie = new HttpCookie(FormsAuthentication.FormsCookieName, cookiestr);
-            //cookie.Path = FormsAuthentication.FormsCookiePath;
-            //Response.Cookies.Add(cookie);
             Response.Redirect("UpdateWebsite.aspx", false);
             }
         else Session["logInStatus"] = false;
