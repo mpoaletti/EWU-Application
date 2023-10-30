@@ -10,10 +10,10 @@ using Owin;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Net.Http;
+//using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
+//using System.Web;
 
 [assembly: OwinStartup(typeof(EmergencyWebsiteUpdate.Startup))]
 

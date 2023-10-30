@@ -32,9 +32,9 @@ namespace EmergencyWebsiteUpdate
     public static void ConnectSSH() {
       try
       {
-        PrivateKeyFile pkFile = new PrivateKeyFile(@"C:\Users\efurzlan\.ssh\id_rsa");
-        //Uncomment for Production and update for location of file on server-------------------------
         //PrivateKeyFile pkFile = new PrivateKeyFile(@"C:\Users\efurzlan\.ssh\id_rsa");
+        //Uncomment for Production and update for location of file on server-------------------------
+        PrivateKeyFile pkFile = new PrivateKeyFile(@"C:\TAS\Apps\EWU\apps1api_privateKey");
 
         //pwmgrSSHClient = new SshClient("secpmgr.uwsuper.edu", 5522, "efurzlanAPI", pkFile);
         //Uncomment for Production-----------------------------------
