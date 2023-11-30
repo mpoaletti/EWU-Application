@@ -26,7 +26,7 @@ namespace EmergencyWebsiteUpdate
 			if (!Request.IsAuthenticated)
 			{
 				HttpContext.Current.GetOwinContext().Authentication.Challenge(
-					new AuthenticationProperties { RedirectUri = "https://137.81.9.55:4443/UpdateWebsite" },
+					new AuthenticationProperties { RedirectUri = "https://ewu.uwsuper.edu:4443/UpdateWebsite" },
 					OpenIdConnectAuthenticationDefaults.AuthenticationType);
 			}
 
