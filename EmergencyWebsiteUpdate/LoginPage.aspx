@@ -1,8 +1,7 @@
 ﻿<%@ Page Title="Login Page" validateRequest="true" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="LoginPage.aspx.cs" Inherits="EmergencyWebsiteUpdate.LoginPage" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-		<h2>
-            &nbsp;</h2>
+		<h2>&nbsp;</h2>
     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
 			<ContentTemplate>
 				<table style="width: 100%;">

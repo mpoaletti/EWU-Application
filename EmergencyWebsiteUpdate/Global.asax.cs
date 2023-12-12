@@ -7,15 +7,11 @@ using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
 
-namespace EmergencyWebsiteUpdate
-{
-	public class Global : HttpApplication
-	{
-		void Application_Start(object sender, EventArgs e)
-		{
-			// Code that runs on application startup
+namespace EmergencyWebsiteUpdate {
+	public class Global : HttpApplication {
+		void Application_Start(object sender, EventArgs e) {
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
+			}
 		}
 	}
-}

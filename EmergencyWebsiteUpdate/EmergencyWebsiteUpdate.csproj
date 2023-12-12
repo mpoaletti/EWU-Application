@@ -175,6 +175,7 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
@@ -645,6 +646,9 @@
     <Content Include="Scripts\ckeditor\bender-runner.config.json" />
     <Content Include="libman.json" />
     <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile1.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -682,10 +686,11 @@
     <Content Include="Site.Mobile.Master" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="App_Data\Connection.cs" />
-    <Compile Include="App_Data\HTMLWriter.cs" />
-    <Compile Include="App_Data\Messaging.cs" />
+    <Compile Include="App_Code\BundleConfig.cs" />
+    <Compile Include="App_Code\Connection.cs" />
+    <Compile Include="App_Code\Decryption.cs" />
+    <Compile Include="App_Code\HTMLWriter.cs" />
+    <Compile Include="App_Code\MessageBoxClass.cs" />
     <Compile Include="LogOut.aspx.cs">
       <DependentUpon>LogOut.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -693,6 +698,7 @@
     <Compile Include="LogOut.aspx.designer.cs">
       <DependentUpon>LogOut.aspx</DependentUpon>
     </Compile>
+    <Compile Include="App_Code\Messaging.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="UpdateWebsite.aspx.cs">
       <DependentUpon>UpdateWebsite.aspx</DependentUpon>
@@ -701,7 +707,7 @@
     <Compile Include="UpdateWebsite.aspx.designer.cs">
       <DependentUpon>UpdateWebsite.aspx</DependentUpon>
     </Compile>
-    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="RouteConfig.cs" />
     <Compile Include="Contact.aspx.cs">
       <DependentUpon>Contact.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -742,7 +748,9 @@
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Start\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />

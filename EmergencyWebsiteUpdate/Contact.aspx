@@ -10,9 +10,7 @@
         <abbr title="Phone">P:</abbr>
         715.394.8300
     </address>
-
     <address>
         <strong>Support:</strong>   <a href="mailto:helpdesk@uwsuper.edu">helpdesk@uwsuper.edu</a><br />
-        
     </address>
 </asp:Content>
