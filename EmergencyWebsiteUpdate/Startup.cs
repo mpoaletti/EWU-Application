@@ -46,7 +46,9 @@ namespace EmergencyWebsiteUpdate {
 			//string keyVaultName = Environment.GetEnvironmentVariable("VaultUri");
 			//string kvUri = "https://" + keyVaultName + ".vault.azure.net";
 			//private string kvUri = "https://" + Environment.GetEnvironmentVariable("VaultUri") + ".vault.azure.net";
-			SecretClient client = new SecretClient(new Uri("https://ewukv.vault.azure.net/"), new DefaultAzureCredential());
+			String azureURI = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["azureURI"]);
+			SecretClient client = new SecretClient(new Uri(azureURI), new DefaultAzureCredential());
+			
 			//SecretClient client = new SecretClient(new Uri("https://" + Environment.GetEnvironmentVariable("VaultUri") + ".vault.azure.net"), new DefaultAzureCredential());
 			//private SecretClient client = new SecretClient(new Uri(Environment.GetEnvironmentVariable("VaultUri")), new DefaultAzureCredential());
 			//SecretClient client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());

@@ -22,9 +22,9 @@ namespace EmergencyWebsiteUpdate {
 		public void UploadFile(FileStream fs, String EndPointURL) {
 			//String Username = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["MontyCheatGDUsername"]);
 			//String Password = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["MontyCheatGDPassword"]);
-			
-			SecretClient clientSC = new SecretClient(new Uri("https://ewukv.vault.azure.net/"), new DefaultAzureCredential());
 
+			String azureURI = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["azureURI"]);
+			SecretClient clientSC = new SecretClient(new Uri(azureURI), new DefaultAzureCredential());
 			//String Username = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("GDUsername").Value.Value);
 			//String Password = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("GDPassword").Value.Value);
 			String Username = clientSC.GetSecret("GDUsername").Value.Value;
@@ -101,8 +101,8 @@ namespace EmergencyWebsiteUpdate {
 
 			public RegularFTPConnector(Page CallingPage) {
 				this.CallingPage = CallingPage;
-				//SecretClient clientSC = new SecretClient(new Uri("https://ewukv.vault.azure.net/"), new DefaultAzureCredential());
-				clientSC = new SecretClient(new Uri("https://ewukv.vault.azure.net/"), new DefaultAzureCredential());
+				String azureURI = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["azureURI"]);
+				clientSC = new SecretClient(new Uri(azureURI), new DefaultAzureCredential());
 				
 				String testUploadVal = (String)System.Configuration.ConfigurationManager.AppSettings["TestUpload"];
 				if (testUploadVal != null) IsTesting = (testUploadVal.ToLower() == "true");
@@ -144,8 +144,6 @@ namespace EmergencyWebsiteUpdate {
 			public String GetContent(String RemoteFtpPath) {
 				//String Username = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["MontyCheatGDUsername"]);
 				//String Password = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["MontyCheatGDPassword"]);
-
-				//SecretClient clientSC = new SecretClient(new Uri("https://ewukv.vault.azure.net/"), new DefaultAzureCredential());
 
 				//String Username = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("GDUsername").Value.Value);
 				//String Password = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("GDPassword").Value.Value);
@@ -204,7 +202,8 @@ namespace EmergencyWebsiteUpdate {
 
 			//String GDTestUpload = (String)System.Configuration.ConfigurationManager.AppSettings["GoDaddyTestUpload"];
 
-			SecretClient clientSC = new SecretClient(new Uri("https://ewukv.vault.azure.net/"), new DefaultAzureCredential());
+			String azureURI = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["azureURI"]);
+			SecretClient clientSC = new SecretClient(new Uri(azureURI), new DefaultAzureCredential());
 
 			//String GDFilePath = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("GoDaddyFilePath").Value.Value);
 			//String GDTestUpload = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("GoDaddyTestUpload").Value.Value);

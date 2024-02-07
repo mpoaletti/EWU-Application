@@ -9,7 +9,7 @@ using System.Web;
 namespace EmergencyWebsiteUpdate
 {
 	public class Decryption
-	{/*
+	{
 		public static string DecryptString(string key, string cipherText)
 		{
 			byte[] iv = new byte[16];
@@ -32,6 +32,6 @@ namespace EmergencyWebsiteUpdate
 					}
 				}
 			}
-		}*/
+		}
 	}
 }
