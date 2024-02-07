@@ -1,105 +1,173 @@
-﻿using Renci.SshNet;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Configuration;
 using System.IO;
 using System.Net;
-using System.Security.Cryptography;
 using System.Text;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 
 namespace EmergencyWebsiteUpdate {
-  public class Connection {
-    //Declare Variables for SFTP connection to GoDaddy website
-    private int GDPort;
-    private string GDServer;
-    private string GDUsername;
-    private string GDPassword;
-    private string GDFilePath = (String)System.Configuration.ConfigurationManager.AppSettings["GoDaddyFilePath"]; 
-    //SFTP Client for connecting to GoDaddy
-    public SftpClient godaddySFTPClient;
-    //SSH Client for connecting to secrets manager (Password Manager Pro)
-    private SshClient pwmgrSSHClient;
+	public class Connection {
 		public MessageBoxClass MessageBox = null;
 		public Page CallingPage = null;
+		//private String username;
+		//private String password;
 
 		public Connection(Page CallingPage) {
 			this.CallingPage = CallingPage;
 			this.MessageBox = new MessageBoxClass(CallingPage);
-			}
-
-    public void ConnectSSH() {
-			String PrivateKeyFileName = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["PrivateKeyFileName"]);
-			String APIUserName = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["APIUserName"]);
-			String APIHostUrl = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["APIHostUrl"]);
-			String APIHostPort = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["APIHostPort"]);
-			
-
-			if (PrivateKeyFileName==null || APIUserName==null || APIHostUrl==null || APIHostPort==null)
-	      MessageBox.Show("Error - Application Settings PrivateKeyFileName, APIUserName, APIHostUrl, and APIHostPort Are Not All Set in web.config");
-			else
-				try {
-					//PrivateKeyFile pkFile = new PrivateKeyFile(@"C:\Users\efurzlan\.ssh\id_rsa");
-					//Uncomment for Production and update for location of file on server-------------------------
-					//pwmgrSSHClient = new SshClient("secpmgr.uwsuper.edu", 5522, "efurzlanAPI", pkFile);
-					//Uncomment for Production-----------------------------------
-					//pwmgrSSHClient = new SshClient("secpmgr.uwsuper.edu", 5522, "APPS1API", pkFile);
-					PrivateKeyFile pkFile = new PrivateKeyFile(PrivateKeyFileName);
-					pwmgrSSHClient = new SshClient(APIHostUrl, Convert.ToInt32(APIHostPort), APIUserName, pkFile);
-					pwmgrSSHClient.Connect();
-					//sshConnected = true;
-					CallingPage.Session["sshConnected"] = true;
-					}
-				catch (Exception ex) {
-					MessageBox.Show("Error - " + ex.Message);
-					}
-		  }
+		}
 
 		public void UploadFile(FileStream fs, String EndPointURL) {
-			String Username = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["MontyCheatGDUsername"]);
-			String Password = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["MontyCheatGDPassword"]);
+			//String Username = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["MontyCheatGDUsername"]);
+			//String Password = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["MontyCheatGDPassword"]);
 			
+			SecretClient clientSC = new SecretClient(new Uri("https://ewukv.vault.azure.net/"), new DefaultAzureCredential());
 
-			String FileContent = null;
-			using (StreamReader reader = new StreamReader(fs)) {
-				FileContent = reader.ReadToEnd();
-				}
-			if (FileContent.Length>0) {
-				byte[] fileContent = Encoding.ASCII.GetBytes(FileContent);
-				using (var client=new WebClient()) {
-					client.Credentials = new NetworkCredential(Username, Password);
-					using (var postStream = client.OpenWrite(EndPointURL)) {
-						postStream.Write(fileContent, 0, fileContent.Length);
-						}
-					}
-				}
+			//String Username = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("GDUsername").Value.Value);
+			//String Password = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("GDPassword").Value.Value);
+			String Username = clientSC.GetSecret("GDUsername").Value.Value;
+			String Password = clientSC.GetSecret("GDPassword").Value.Value;
+
+
+			bool testUpload = false;
+			String testUploadVal = (String)System.Configuration.ConfigurationManager.AppSettings["TestUpload"];
+			if (testUploadVal != null) testUpload = (testUploadVal.ToLower() == "true");
+
+			if (testUpload) {
+				//Username = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("TestUsername").Value.Value);
+				//Password = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("TestPassword").Value.Value);
+				Username = clientSC.GetSecret("TestUsername").Value.Value;
+				Password = clientSC.GetSecret("TestPassword").Value.Value;
+
 			}
 
+			//String FileContent = null;
+			StreamReader readStream = new StreamReader(fs);
+			//FileStream newStream = readStream.ReadToEnd();
+			/*using (StreamReader reader = new StreamReader(fs)) {
+				FileContent = reader.ReadToEnd();
+			}*/
+			//if (FileContent.Length>0) {
+				//byte[] fileContent = Encoding.ASCII.GetBytes(FileContent);
+
+				FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create(EndPointURL);
+				ftpRequest.Method = WebRequestMethods.Ftp.UploadFile;
+				//ftpRequest.KeepAlive = true;
+				//ftpRequest.UsePassive = true;
+				//ftpRequest.UseBinary = true;
+				ftpRequest.Credentials = new NetworkCredential(Username, Password);
+
+				//try{
+				using (Stream ftpRequestStream = ftpRequest.GetRequestStream())
+				{
+					fs.CopyTo(ftpRequestStream);
+				}
+				//catch(Exception ex) {
+				//	MessageBox.Show(ex.Message);
+				//}
+				//FtpWebResponse ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
+				//MessageBox.Show(ftpResponse.ToString());
+				
+				/*using (var client = new WebClient())
+				{
+					client.Credentials = new NetworkCredential(Username, Password);
+
+					
+					try{
+						client.UploadData(EndPointURL, fileContent);
+					}
+					catch(Exception ex) {
+						MessageBox.Show(ex.Message);
+					}
+
+
+					//using (var postStream = client.OpenWrite(EndPointURL))
+					//{
+					//	postStream.Write(fileContent, 0, fileContent.Length);
+					//}
+				}*/
+			//}
+		}
+
 		public class RegularFTPConnector {
+			
 			private Page CallingPage = null;
+			//String TestingASPFile = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["FTPPathTestingFileLocation"]);
+			//String ProductionASPFile = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["FTPPathProductionASPFileLocation"]);
+			SecretClient clientSC;
+			bool IsTesting = false;
+
 			public RegularFTPConnector(Page CallingPage) {
 				this.CallingPage = CallingPage;
-				}
-			String TestingASPFile = "ftp://107.180.50.87/httpdocs/testing.asp";
-			String ProductionASPFile = "ftp://107.180.50.87/httpdocs/emergency-content.asp";
-			readonly Boolean IsTesting = true;
+				//SecretClient clientSC = new SecretClient(new Uri("https://ewukv.vault.azure.net/"), new DefaultAzureCredential());
+				clientSC = new SecretClient(new Uri("https://ewukv.vault.azure.net/"), new DefaultAzureCredential());
+				
+				String testUploadVal = (String)System.Configuration.ConfigurationManager.AppSettings["TestUpload"];
+				if (testUploadVal != null) IsTesting = (testUploadVal.ToLower() == "true");
+			}
+
+
+			//String TestingASPFile = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["FTPPathTestingFileLocation"]);
+			//String ProductionASPFile = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["FTPPathProductionASPFileLocation"]);
+
+			//readonly Boolean IsTesting = true;
 			public String GetEmergencyContentASP() {
+				//String TestingASPFile = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("FTPPathTestingFileLocation").Value.Value);
+				//String ProductionASPFile = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("FTPPathProductionASPFileLocation").Value.Value);
+				String TestingASPFile = clientSC.GetSecret("FTPPathTestingFileLocation").Value.Value;
+				String ProductionASPFile = clientSC.GetSecret("FTPPathProductionASPFileLocation").Value.Value;
+
 				String RemoteFtpPath = (IsTesting?TestingASPFile:ProductionASPFile);
 				return GetContent(RemoteFtpPath);
-				}
+			}
+
 			public String GetEmergencyContentPreviousText() {
-				String RemoteFtpPath = "ftp://107.180.50.87/httpdocs/previousText.txt";
+				//String RemoteFtpPath = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["FTPPathPreviousTXTMessageFileLocation"]);
+				//String RemoteFtpPath = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("FTPPathPreviousTXTMessageFileLocation").Value.Value);
+				String RemoteFtpPath = clientSC.GetSecret("FTPPathPreviousTXTMessageFileLocation").Value.Value;
+				if(IsTesting) RemoteFtpPath = clientSC.GetSecret("FTPPathTestingPreviousTXTMessageFileLocation").Value.Value;
+
 				return GetContent(RemoteFtpPath);
-				}
+			}
+
 			public String GetEmergencyContentPreviousASP() {
-				String RemoteFtpPath = "ftp://107.180.50.87/httpdocs/previousASP.txt";
+				//String RemoteFtpPath = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["FTPPathPreviousASPMessageFileLocation"]);
+				//String RemoteFtpPath = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("FTPPathPreviousASPMessageFileLocation").Value.Value);
+				String RemoteFtpPath = clientSC.GetSecret("FTPPathPreviousASPMessageFileLocation").Value.Value;
+				if (IsTesting) RemoteFtpPath = clientSC.GetSecret("FTPPathTestingPreviousASPMessageFileLocation").Value.Value;
+
 				return GetContent(RemoteFtpPath);
-				}
+			}
+
 			public String GetContent(String RemoteFtpPath) {
-				String Username="UWSWebmaster";
-				String Password = "B_k92g3r";
+				//String Username = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["MontyCheatGDUsername"]);
+				//String Password = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["MontyCheatGDPassword"]);
+
+				//SecretClient clientSC = new SecretClient(new Uri("https://ewukv.vault.azure.net/"), new DefaultAzureCredential());
+
+				//String Username = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("GDUsername").Value.Value);
+				//String Password = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("GDPassword").Value.Value);
+
+				String Username = clientSC.GetSecret("GDUsername").Value.Value;
+				String Password = clientSC.GetSecret("GDPassword").Value.Value;
+
+
+				//bool testUpload = false;
+				//String testUploadVal = (String)System.Configuration.ConfigurationManager.AppSettings["TestUpload"];
+				//if (testUploadVal != null) testUpload = (testUploadVal.ToLower() == "true");
+
+				//if (testUpload)
+				if(IsTesting)
+				{
+					//Username = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("TestUsername").Value.Value);
+					//Password = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("TestPassword").Value.Value);
+					Username = clientSC.GetSecret("TestUsername").Value.Value;
+					Password = clientSC.GetSecret("TestPassword").Value.Value;
+
+				}
+
 				Boolean UseBinary = true; // use true for .zip file or false for a text file
 				Boolean UsePassive = true;
 				FtpWebRequest request = (FtpWebRequest)WebRequest.Create(RemoteFtpPath);
@@ -108,7 +176,7 @@ namespace EmergencyWebsiteUpdate {
 				request.UsePassive = UsePassive;
 				request.UseBinary = UseBinary;
 				request.Credentials = new NetworkCredential(Username, Password);
-				UpdateWebsite uw = (UpdateWebsite)CallingPage;
+				//UpdateWebsite uw = (UpdateWebsite)CallingPage;
 				FtpWebResponse response = (FtpWebResponse)request.GetResponse();
 				Stream responseStream = response.GetResponseStream();
 				StreamReader reader = new StreamReader(responseStream);
@@ -121,113 +189,70 @@ namespace EmergencyWebsiteUpdate {
 				while (readCount > 0) {
 					writer.Write(buffer, 0, readCount);
 					readCount = responseStream.Read(buffer, 0, bufferSize);
-					}
+				}
+
 				reader.Close();
 				response.Close();
 				writer.Position = 0;
 				StreamReader r = new StreamReader(writer);
 				return r.ReadToEnd();
-				}
+			}
+		}
+
+		public void TransferFiles(String tempASPLocation, String tempASPCacheLocation, String tempTextCacheLocation) {
+			//String GDFilePath = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["GoDaddyFilePath"]);
+
+			//String GDTestUpload = (String)System.Configuration.ConfigurationManager.AppSettings["GoDaddyTestUpload"];
+
+			SecretClient clientSC = new SecretClient(new Uri("https://ewukv.vault.azure.net/"), new DefaultAzureCredential());
+
+			//String GDFilePath = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("GoDaddyFilePath").Value.Value);
+			//String GDTestUpload = Decryption.DecryptString(clientSC.GetSecret("EncryptKey").Value.Value, clientSC.GetSecret("GoDaddyTestUpload").Value.Value);
+
+			String GDFilePath = clientSC.GetSecret("GDFilePath").Value.Value;
+			String GDTestUpload = clientSC.GetSecret("GDTestUpload").Value.Value;
+
+			bool IsTesting = false;
+
+			String testUploadVal = (String)System.Configuration.ConfigurationManager.AppSettings["TestUpload"];
+			if (testUploadVal != null) IsTesting = (testUploadVal.ToLower() == "true");
+
+			//Boolean TestUpload = false;
+
+			//if (GDTestUpload!=null) TestUpload = (GDTestUpload.ToLower()=="true");
+
+			//String FilePath = (TestUpload ? GDTestUpload : GDFilePath);
+			String FilePath = (IsTesting ? GDTestUpload : GDFilePath);
+
+			using (FileStream fs = new FileStream(tempASPLocation, FileMode.Open))
+			{
+				//UploadFile(fs, FilePath + (TestUpload ? "testing.asp" : "/emergency-content.asp"));
+				UploadFile(fs, FilePath + (IsTesting ? "/testing.asp" : "/emergency-content.asp"));
 			}
 
-		//public String MessageBufferASP = null;
-		//public String MessageBufferPreviousText = null;
-		//public String MessageBufferPreviousASP = null;
+			using (FileStream fs = new FileStream(tempASPCacheLocation, FileMode.Open))
+			{
+				UploadFile(fs, FilePath + "/previousASP.txt");
+			}
 
-    public void ConnectSFTP() {
-			//String MontySaysCheatOnPasswordStuff = (String)System.Configuration.ConfigurationManager.AppSettings["MontySaysCheatOnPasswordStuff"];
-			//if (MontySaysCheatOnPasswordStuff!="0") {
+			using (FileStream fs = new FileStream(tempTextCacheLocation, FileMode.Open))
+			{
+				UploadFile(fs, FilePath + "/previousText.txt");
+			}
 
-			String MontyCheatGDServer = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["MontyCheatGDServer"]);
-			String MontyCheatGDPort = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["MontyCheatGDPort"]);
-			String MontyCheatGDUsername = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["MontyCheatGDUsername"]);
-			String MontyCheatGDPassword = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["MontyCheatGDPassword"]);
-		
-
-			GDServer = MontyCheatGDServer; GDPort = Convert.ToInt32(MontyCheatGDPort); GDUsername = MontyCheatGDUsername; GDPassword = MontyCheatGDPassword;
-			//	}
-			//else {
-				//ConnectSSH();
-				//GDServer = RetrieveSSHData("GDServer");
-				//int.TryParse(RetrieveSSHData("GDPort"), out GDPort); // How About GDPort = Convert.ToInt32(RetrieveSSHData("GDPort")) ?;
-				//GDUsername = RetrieveSSHData("GDUsername");
-				//GDPassword = RetrieveSSHData("GDPassword");
-				//DisconnectSSH();
-				//}
-			try {
-				RegularFTPConnector ftp = new RegularFTPConnector(CallingPage);
-				//MessageBufferPreviousText = ftp.GetEmergencyContentPreviousText();
-				CallingPage.Session["sftpConnected"] = true;
-				}
-			catch (Exception ex) {
-				MessageBox.Show("Error - " + ex.Message);
-				}
-	    }
-    public void DisconnectSSH() {
-      try {
-        pwmgrSSHClient.Disconnect();
-        ////sshConnected = false;
-				CallingPage.Session["sshConnected"] = false;
-	      }
-      catch (Exception ex) {
-        MessageBox.Show("Error - " + ex.Message);
-	      }
-		  }
-
-    public void DisconnectSFTP() {
-      try {
-				SftpClient godaddySFTPClient = (SftpClient)CallingPage.Session["godaddySFTPClient"];
-				godaddySFTPClient.Disconnect();
-				CallingPage.Session["sftpConnected"] = false;
-	      }
-      catch (Exception ex) {
-        MessageBox.Show("Error - " + ex.Message);
-	      }
-		  }
-
-    public bool IsSFTPConnected() { 
-			if (CallingPage.Session["sftpConnected"]==null)
-				return false;
-			else
-				return (Boolean)CallingPage.Session["sftpConnected"];
-	    }
-
-    public bool IsSSHConnected() {
-			if (CallingPage.Session["sshConnected"]==null)
-				return false;
-			else
-				return (Boolean)CallingPage.Session["sshConnected"];
-	    }
-
-    public string RetrieveSSHData(string acctInfo) {
-      if(IsSSHConnected()) {
-        SshCommand retData = pwmgrSSHClient.CreateCommand("RETRIEVE --resource=EWUAPP --account=" + acctInfo);
-        retData.Execute();
-        return retData.Result.Substring(0,retData.Result.Length-2); //remove last 2 characters of /r/n
-	      }
-      else {
-        return "";
-	      }
-		  }
-
-    public void TransferFiles(String tempASPLocation, String tempASPCacheLocation, String tempTextCacheLocation) {
-			GDFilePath = Decryption.DecryptString((String)ConfigurationManager.AppSettings["decryptKey"], (String)System.Configuration.ConfigurationManager.AppSettings["GoDaddyFilePath"]);
-
-			String GDTestUpload = (String)System.Configuration.ConfigurationManager.AppSettings["GoDaddyTestUpload"];
+			/*
+			using (FileStream fs = new FileStream(tempASPLocation, FileMode.Open)) {
+				UploadFile(fs, GDFilePath + (TestUpload?"testing.asp":"/emergency-content.asp"));
+			}
 			
-			Boolean TestUpload = false;
-			if (GDTestUpload!=null)
-				TestUpload = (GDTestUpload.ToLower()=="true");
-      using (FileStream fs = new FileStream(tempASPLocation, FileMode.Open)) {
-        UploadFile(fs, GDFilePath + (TestUpload?"testing.asp":"/emergency-content.asp"));
-		    }
-      using (FileStream fs = new FileStream(tempASPCacheLocation, FileMode.Open)) {
-        UploadFile(fs, GDFilePath + "/previousASP.txt");
-	      }
-      using (FileStream fs = new FileStream(tempTextCacheLocation, FileMode.Open)) {
-        UploadFile(fs, GDFilePath + "/previousText.txt");
-	      }
+			using (FileStream fs = new FileStream(tempASPCacheLocation, FileMode.Open)) {
+				UploadFile(fs, GDFilePath + "/previousASP.txt");
 			}
+
+			using (FileStream fs = new FileStream(tempTextCacheLocation, FileMode.Open)) {
+				UploadFile(fs, GDFilePath + "/previousText.txt");
+			}*/
+		}
 
 	}
 }

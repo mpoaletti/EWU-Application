@@ -3,15 +3,13 @@
 
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-		<div class="jumbotron">
+		<div class="jumbotron" style="background-color:#ffd046">
             <table style="width:100%;">
 							<tr>
 								<td class="modal-sm" style="width: 19%">
 									<img alt="University of Wisconsin Logo" src="swooshLOGOrevSmall.jpg" style="width: 175px; height: 110px" /></td>
 								<td class="text-center" style="width: 27%">
-            			<asp:Button ID="bttnConnection" runat="server" BackColor="Black" ForeColor="Gold" OnClick="bttnConnection_Click" Text="Connect" Enabled="False" Font-Names="Montserrat" Font-Bold="True" Visible="False"  />
                         <br />
-            			<asp:Label ID="lblConnection" runat="server" Text="Not Connected" Font-Bold="True" ForeColor="Red" Font-Names="Montserrat ExtraBold" Visible="False"></asp:Label>
             		</td>
 								<td style="width: 18%">
             <asp:Label ID="lblLoggedIn" runat="server" Text="Not Logged In" Font-Names="Montserrat ExtraBold" Font-Bold="True"></asp:Label>
