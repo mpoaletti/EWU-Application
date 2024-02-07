@@ -114,7 +114,6 @@ namespace EmergencyWebsiteUpdate {
       updateInfo.AppendLine(hwriter.Get_HTML_Footer().ToString());
       try {
         //Write HTML file to temp file to transfer to server    
-        //File.WriteAllText(tempASPLocation, informationUpdate.ToString());
         File.WriteAllText(tempASPLocation, updateInfo.ToString());
         //Write previous ASP message to cache file to retrieve on add to message next time
         File.WriteAllText(tempASPCacheLocation, informationUpdate.ToString());
